@@ -1,34 +1,149 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Wechat刷步</title>
-<style type="text/css">
-form {border:dashed}
-        .juzhong {text-align: left; margin: 50px auto; padding-left:50px; width: 800px; font-size: 20px; font-family: "����";}
-        .youduiqi{margin-left:655px; margin-top: 10px;}
-        .shuru {width: auto}
-        .zhanghao{width: 200px; height: 25px; margin-top: 10px; margin-bottom: 10px;}
-        .mima{width: 200px;height: 25px;margin-top: 10px; margin-bottom: 10px;}
-        .bushu{width: 200px;height: 25px;margin-top: 10px; margin-bottom: 10px;}
-        form {margin: 20px auto;}
-</style>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=1">
+    <title>Wechat刷步</title>
+    <style type="text/css">
+        form {
+            border: dashed
+        }
+
+        .juzhong {
+            text-align: left;
+            margin: 50px auto;
+        {#padding-left: 50px;#}{#width: 800px;#} font-size: 20px;
+        }
+
+        .youduiqi {
+        {#margin-left: 655px;#} margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .shuru {
+            width: auto
+        }
+
+        #username {
+            width: 200px;
+            height: 25px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        #password {
+            width: 200px;
+            height: 25px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        #step {
+            width: 200px;
+            height: 25px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-size: 16px;
+        }
+
+        #tips {
+            color: red;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button {
+            margin: 10px;
+        }
+    </style>
 </head>
-  
+
 <body>
 <div class="juzhong" style="text-align:center;">
-        <p align="center" style="margin-bottom: 30px;">Wechat刷步</p>
-        <form method="post" action="/api/shuabu">
-                账号：<input type="text" class="zhanghao" name="user" />
-                <br>
-                密码：<input type="text" class="mima" name="password" />
-                <br>
-                步数：<input type="text" class="bushu" name="step" />
-                <br>
-                <div class="youduiqi">
-                <input type="reset" value="重置"> <input type="submit" value="提交">
-                </div>
-        </form>
+    <p align="center" style="margin-bottom: 30px;">Wechat刷步</p>
+    <div>
+        <label class="label">账号：</label><input type="text" id="username" name="username" placeholder="手机号"/>
+        <br>
+        <label class="label">密码：</label><input type="password" id="password" name="password" placeholder="密码"/>
+        <br>
+        <label class="label">步数：</label><input type="text" id="step" name="step" placeholder="目标步数"/>
+        <br>
+        <div id="tips"></div>
+        <div class="youduiqi">
+            <button onclick="reset()">重置</button>
+            <button onclick="submit()">提交</button>
         </div>
+    </div>
+</div>
+<script>
+    var Ajax = {
+        get: function (url, callback) {
+            // XMLHttpRequest对象用于在后台与服务器交换数据
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false);
+            xhr.onreadystatechange = function () {
+                // readyState == 4说明请求已完成
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200 || xhr.status == 304) {
+                        console.log(xhr.responseText);
+                        callback(xhr.responseText);
+                    }
+                }
+            }
+            xhr.send();
+        },
+
+        // data应为'a=a1&b=b1'这种字符串格式，在jq里如果data为对象会自动将对象转成这种字符串格式
+        post: function (url, data, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url, false);
+            // 添加http头，发送信息至服务器时内容编码类型
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200 || xhr.status == 304) {
+                        // console.log(xhr.responseText);
+                        callback(xhr.responseText);
+                    }
+                }
+            }
+            xhr.send(data);
+        }
+    }
+
+    function reset() {
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("step").value = "";
+    }
+
+    function submit() {
+        {#alert(document.getElementById("username").value);#}
+        var username = document.getElementById("username").value.trim();
+        var password = document.getElementById("password").value.trim();
+        var step = document.getElementById("step").value.trim();
+
+        if (username === "" || password === "" || step === "") {
+            document.getElementById("tips").innerText = '账号、密码及步数不能为空';
+        } else {
+            Ajax.post('/api/shuabu', "username=" + username + "&password=" + password + "&step=" + step,
+                function (res) {
+                    res = JSON.parse(res);
+                    if (res.code === 0){
+                        alert(res.data);
+                    } else{
+                        document.getElementById("tips").innerText = res.errorMsg;
+                    }
+                }
+            )
+        }
+    }
+</script>
 </body>
 </html>

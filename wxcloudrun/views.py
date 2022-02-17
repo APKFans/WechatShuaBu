@@ -16,7 +16,7 @@ def index(request, _):
      `` request `` 请求对象
     """
 
-    return render(request, 'bushu.html')
+    return render(request, 'bushu.html', {"error": ""})
 
 
 def counter(request, _):
@@ -97,17 +97,26 @@ def shua_bu(request):
     """
     if request.method == 'POST':
         logger.info('shua_bu req: {}'.format(request.body))
-        user = request.POST.get('user', '')
+        user = request.POST.get('username', '')
         password = request.POST.get('password', '')
         step = request.POST.get('step', 0)
+
+        if not user or not password or not step:
+            return render(request, "bushu.html", {"error": "账号、密码和步数不能为空"})
+
         try:
             step = int(step)
             if step <= 0:
+                # return render(request, "bushu.html", {"error": "step需要大于等于0"})
                 return JsonResponse({'code': -1, 'errorMsg': 'step需要大于等于0'}, json_dumps_params={'ensure_ascii': False})
         except:
+            # return render(request, "bushu.html", {"error": "step输入错误，需正整数"})
             return JsonResponse({'code': -1, 'errorMsg': 'step输入错误，需正整数'}, json_dumps_params={'ensure_ascii': False})
+
         event = {"queryString": {"user": user.strip(), "password": password.strip(), "step": step}}
         result = main_handler(event)
+        # return render(request, "bushu.html", {"error": result.get('data')})
         return JsonResponse(result, json_dumps_params={'ensure_ascii': False})
     else:
+        # return render(request, "bushu.html", {"error": "method错误"})
         return JsonResponse({'code': -1, 'errorMsg': 'method错误'}, json_dumps_params={'ensure_ascii': False})
