@@ -71,51 +71,44 @@ def reply(request):
             password = m[1]
             step = m[2]
 
+            xml_from = """
+                <xml>
+                    <ToUserName><![CDATA[{ToUserName}]]></ToUserName>
+                    <FromUserName><![CDATA[{FromUserName}]]></FromUserName>
+                    <CreateTime>{CreateTime}</CreateTime>
+                    <MsgType><![CDATA[text]]></MsgType>
+                    <Content><![CDATA[{Content}]]></Content>
+                </xml>
+                """
+
             if not username or not password or not step:
-                return HttpResponse(f"""<xml>
-                          <ToUserName><![CDATA[{to_user}]]></ToUserName>
-                          <FromUserName><![CDATA[{from_user}]]></FromUserName>
-                          <CreateTime>{create_time}</CreateTime>
-                          <MsgType><![CDATA[text]]></MsgType>
-                          <Content><![CDATA[{'账号、密码和步数不能为空'}]]></Content>
-                        </xml>""", content_type="application/xml")
+                xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                       Content='账号、密码和步数不能为空')
+                return HttpResponse(xml, content_type='application/xml')
 
             try:
                 step = int(step)
                 if step <= 0:
-                    return HttpResponse(f"""<xml>
-                                  <ToUserName><![CDATA[{to_user}]]></ToUserName>
-                                  <FromUserName><![CDATA[{from_user}]]></FromUserName>
-                                  <CreateTime>{create_time}</CreateTime>
-                                  <MsgType><![CDATA[text]]></MsgType>
-                                  <Content><![CDATA[{'步数需要大于等于0'}]]></Content>
-                                </xml>""", content_type="application/xml")
+                    xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                           Content='步数需要大于等于0')
+                    return HttpResponse(xml, content_type='application/xml')
+
             except:
-                return HttpResponse(f"""<xml>
-                              <ToUserName><![CDATA[{to_user}]]></ToUserName>
-                              <FromUserName><![CDATA[{from_user}]]></FromUserName>
-                              <CreateTime>{create_time}</CreateTime>
-                              <MsgType><![CDATA[text]]></MsgType>
-                              <Content><![CDATA[{'步数输入错误，需是正整数'}]]></Content>
-                            </xml>""", content_type="application/xml")
+                xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                       Content='步数输入错误，需是正整数')
+                return HttpResponse(xml, content_type='application/xml')
 
             event = {"queryString": {"user": username.strip(), "password": password.strip(), "step": step}}
             result = main_handler(event)
             if result['code'] == 0:
-                return HttpResponse(f"""<xml>
-                              <ToUserName><![CDATA[{to_user}]]></ToUserName>
-                              <FromUserName><![CDATA[{from_user}]]></FromUserName>
-                              <CreateTime>{create_time}</CreateTime>
-                              <MsgType><![CDATA[text]]></MsgType>
-                              <Content><![CDATA[{result.get('data')}]]></Content>
-                            </xml>""", content_type="application/xml")
+                xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                       Content=result.get('data'))
+                return HttpResponse(xml, content_type='application/xml')
             else:
-                return HttpResponse(f"""<xml>
-                              <ToUserName><![CDATA[{to_user}]]></ToUserName>
-                              <FromUserName><![CDATA[{from_user}]]></FromUserName>
-                              <CreateTime>{create_time}</CreateTime>
-                              <MsgType><![CDATA[text]]></MsgType>
-                              <Content><![CDATA[{result.get('errorMsg')}]]></Content>
-                            </xml>""", content_type="application/xml")
-
-
+                xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                       Content=result.get('errorMsg'))
+                return HttpResponse(xml, content_type='application/xml')
+        else:
+            return HttpResponse('success', content_type='application/xml')
+    else:
+        return HttpResponse('success', content_type='application/xml')
