@@ -60,8 +60,8 @@ def reply(request):
     logger.info(reply)
     msg_type = reply['MsgType']
     if msg_type == 'text':
-        to_user = reply['ToUserName']
-        from_user = reply['FromUserName']
+        from_user = reply['ToUserName']
+        to_user = reply['FromUserName']
         msg = reply['Content']
         m = msg.split('#')
         create_time = int(time.time())
