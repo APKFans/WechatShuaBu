@@ -56,8 +56,8 @@ def reply(request):
     用户刷步消息处理
     """
     xml = 'success'
-    logger.info('shua_bu req: {}'.format(request.body))
-    reply = json.loads(request.body)
+    logger.info('shua_bu req: {}'.format(request.body.decode("utf-8")))
+    reply = json.loads(request.body.decode("utf-8"))
     logger.info(reply)
     msg_type = reply['MsgType']
     if msg_type == 'text':
@@ -105,4 +105,4 @@ def reply(request):
                     xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
                                           Content='步数输入错误，需是正整数')
     logger.info(xml)
-    return HttpResponse(xml, content_type='application/xml')
+    return HttpResponse(xml)
