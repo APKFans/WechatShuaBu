@@ -55,6 +55,7 @@ def reply(request):
     """
     用户刷步消息处理
     """
+    xml = 'success'
     logger.info('shua_bu req: {}'.format(request.body))
     reply = json.loads(request.body)
     logger.info(reply)
@@ -83,32 +84,25 @@ def reply(request):
 
             if not username or not password or not step:
                 xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
-                                       Content='账号、密码和步数不能为空')
-                return HttpResponse(xml, content_type='application/xml')
-
-            try:
-                step = int(step)
-                if step <= 0:
-                    xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
-                                           Content='步数需要大于等于0')
-                    return HttpResponse(xml, content_type='application/xml')
-
-            except:
-                xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
-                                       Content='步数输入错误，需是正整数')
-                return HttpResponse(xml, content_type='application/xml')
-
-            event = {"queryString": {"user": username.strip(), "password": password.strip(), "step": step}}
-            result = main_handler(event)
-            if result['code'] == 0:
-                xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
-                                       Content=result.get('data'))
-                return HttpResponse(xml, content_type='application/xml')
+                                      Content='账号、密码和步数不能为空')
             else:
-                xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
-                                       Content=result.get('errorMsg'))
-                return HttpResponse(xml, content_type='application/xml')
-        else:
-            return HttpResponse('success', content_type='application/xml')
-    else:
-        return HttpResponse('success', content_type='application/xml')
+                try:
+                    step = int(step)
+                    if step <= 0:
+                        xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                              Content='步数需要大于等于0')
+                    else:
+                        event = {"queryString": {"user": username.strip(), "password": password.strip(), "step": step}}
+                        result = main_handler(event)
+                        if result['code'] == 0:
+                            xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                                  Content=result.get('data'))
+                        else:
+                            xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                                  Content=result.get('errorMsg'))
+
+                except:
+                    xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
+                                          Content='步数输入错误，需是正整数')
+    logger.info(xml)
+    return HttpResponse(xml, content_type='application/xml')
