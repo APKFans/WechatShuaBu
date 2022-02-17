@@ -137,6 +137,7 @@
                 function (res) {
                     res = JSON.parse(res);
                     if (res.code === 0){
+                        document.getElementById("tips").innerText = "";
                         alert(res.data);
                     } else{
                         document.getElementById("tips").innerText = res.errorMsg;
