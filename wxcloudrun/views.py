@@ -2,7 +2,7 @@ import json
 import logging
 import time
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 # from wxcloudrun.models import Counters
 from wxcloudrun.shuabu.xiaomi import main_handler
@@ -72,41 +72,50 @@ def reply(request):
             step = m[2]
 
             if not username or not password or not step:
-                return f"""<xml>
+                return HttpResponse(f"""<xml>
                           <ToUserName><![CDATA[{to_user}]]></ToUserName>
                           <FromUserName><![CDATA[{from_user}]]></FromUserName>
                           <CreateTime>{create_time}</CreateTime>
                           <MsgType><![CDATA[text]]></MsgType>
                           <Content><![CDATA[{'账号、密码和步数不能为空'}]]></Content>
-                        </xml>"""
+                        </xml>""", content_type="application/xml")
 
             try:
                 step = int(step)
                 if step <= 0:
-                    return f"""<xml>
+                    return HttpResponse(f"""<xml>
                                   <ToUserName><![CDATA[{to_user}]]></ToUserName>
                                   <FromUserName><![CDATA[{from_user}]]></FromUserName>
                                   <CreateTime>{create_time}</CreateTime>
                                   <MsgType><![CDATA[text]]></MsgType>
                                   <Content><![CDATA[{'步数需要大于等于0'}]]></Content>
-                                </xml>"""
+                                </xml>""", content_type="application/xml")
             except:
-                return f"""<xml>
+                return HttpResponse(f"""<xml>
                               <ToUserName><![CDATA[{to_user}]]></ToUserName>
                               <FromUserName><![CDATA[{from_user}]]></FromUserName>
                               <CreateTime>{create_time}</CreateTime>
                               <MsgType><![CDATA[text]]></MsgType>
                               <Content><![CDATA[{'步数输入错误，需是正整数'}]]></Content>
-                            </xml>"""
+                            </xml>""", content_type="application/xml")
 
             event = {"queryString": {"user": username.strip(), "password": password.strip(), "step": step}}
             result = main_handler(event)
-            return f"""<xml>
-                          <ToUserName><![CDATA[{to_user}]]></ToUserName>
-                          <FromUserName><![CDATA[{from_user}]]></FromUserName>
-                          <CreateTime>{create_time}</CreateTime>
-                          <MsgType><![CDATA[text]]></MsgType>
-                          <Content><![CDATA[{result.get('data')}]]></Content>
-                        </xml>"""
+            if result['code'] == 0:
+                return HttpResponse(f"""<xml>
+                              <ToUserName><![CDATA[{to_user}]]></ToUserName>
+                              <FromUserName><![CDATA[{from_user}]]></FromUserName>
+                              <CreateTime>{create_time}</CreateTime>
+                              <MsgType><![CDATA[text]]></MsgType>
+                              <Content><![CDATA[{result.get('data')}]]></Content>
+                            </xml>""", content_type="application/xml")
+            else:
+                return HttpResponse(f"""<xml>
+                              <ToUserName><![CDATA[{to_user}]]></ToUserName>
+                              <FromUserName><![CDATA[{from_user}]]></FromUserName>
+                              <CreateTime>{create_time}</CreateTime>
+                              <MsgType><![CDATA[text]]></MsgType>
+                              <Content><![CDATA[{result.get('errorMsg')}]]></Content>
+                            </xml>""", content_type="application/xml")
 
 
