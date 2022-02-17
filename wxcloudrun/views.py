@@ -102,7 +102,7 @@ def shua_bu(request):
         step = request.POST.get('step', 0)
 
         if not user or not password or not step:
-            return render(request, "bushu.html", {"error": "账号、密码和步数不能为空"})
+            return JsonResponse({'code': -1, 'errorMsg': '账号、密码和步数不能为空'}, json_dumps_params={'ensure_ascii': False})
 
         try:
             step = int(step)
