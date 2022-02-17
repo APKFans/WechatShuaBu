@@ -16,11 +16,15 @@ Including another URLconf
 
 from wxcloudrun import views
 from django.conf.urls import url
+from django.urls import path
+
+from wxcloudrun.views import shua_bu
 
 urlpatterns = (
     # 计数器接口
     url(r'^^api/count(/)?$', views.counter),
-    url(r'^^api/shuabu(/)?$', views.shua_bu),
+    # 刷步
+    path('api/shuabu', shua_bu),
     # 获取主页
     url(r'(/)?$', views.index),
 )

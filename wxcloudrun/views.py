@@ -101,7 +101,7 @@ def shua_bu(request):
         password = request.POST.get('password')
         step = request.POST.get('step')
         event = {"queryString": {"user": user, "password": password, "step": step}}
-        main_handler(event)
+        result = main_handler(event)
+        return JsonResponse(result, json_dumps_params={'ensure_ascii': False})
     else:
-        return JsonResponse({'code': -1, 'errorMsg': 'method错误'},
-                            json_dumps_params={'ensure_ascii': False})
+        return JsonResponse({'code': -1, 'errorMsg': 'method错误'}, json_dumps_params={'ensure_ascii': False})

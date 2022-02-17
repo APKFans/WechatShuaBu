@@ -65,19 +65,24 @@ def login(user, password):
 
 # 主函数
 def main_handler(event):
+    result = {'code': 0, 'errorMsg': '', 'data': ''}
     logger.info(event["queryString"])
     try:
         user = str(event["queryString"]["user"])
         password = str(event["queryString"]["password"])
         step = str(event["queryString"]["step"])
     except:
-        return "please input user,password,step"
+        result['code'] = -1
+        result['errorMsg'] = "please input user,password,step"
+        return result
 
     login_token = 0
     login_token, userid = login(user, password)
     if login_token == 0:
         logger.info("登陆失败！")
-        return "login fail!"
+        result['code'] = -1
+        result['errorMsg'] = "login fail!"
+        return result
 
     t = get_time()
 
@@ -109,7 +114,7 @@ def main_handler(event):
 
     response = requests.post(url, data=data, headers=head).json()
     logger.info(response)
-    result = f"change step {step}:" + response['message']
+    result['data'] = f"change step {step}:" + response['message']
     logger.info(result)
     return result
 
