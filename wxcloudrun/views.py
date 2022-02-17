@@ -103,4 +103,4 @@ def reply(request):
                     xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
                                           Content='步数输入错误，需是正整数')
     logger.info(xml)
-    return HttpResponse(xml)
+    return HttpResponse(xml,content_type='text/xml; charset=utf-8')
