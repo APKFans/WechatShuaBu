@@ -72,15 +72,13 @@ def reply(request):
             password = m[1]
             step = m[2]
 
-            xml_from = """
-                <xml>
+            xml_from = """<xml>
                     <ToUserName><![CDATA[{ToUserName}]]></ToUserName>
                     <FromUserName><![CDATA[{FromUserName}]]></FromUserName>
                     <CreateTime>{CreateTime}</CreateTime>
                     <MsgType><![CDATA[text]]></MsgType>
                     <Content><![CDATA[{Content}]]></Content>
-                </xml>
-                """
+                </xml>"""
 
             if not username or not password or not step:
                 xml = xml_from.format(ToUserName=to_user, FromUserName=from_user, CreateTime=create_time,
