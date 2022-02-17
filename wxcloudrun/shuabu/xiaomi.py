@@ -118,7 +118,7 @@ def main_handler(event):
 
             response = requests.post(url, data=data, headers=head).json()
             logger.info(response)
-            result['data'] = f"change step {step}:" + response['message']
+            result['data'] = f"change step {step}: " + response['message']
             logger.info(result)
             return result
     except Exception as e:
