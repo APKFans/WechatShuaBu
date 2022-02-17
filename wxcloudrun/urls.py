@@ -18,11 +18,13 @@ from wxcloudrun import views
 from django.conf.urls import url
 from django.urls import path
 
-from wxcloudrun.views import shua_bu
+from wxcloudrun.views import shua_bu, reply
 
 urlpatterns = (
     # 刷步
     path('api/shuabu', shua_bu),
+    # 消息处理
+    path('api/reply', reply),
     # 获取主页
     url(r'(/)?$', views.index),
 )

@@ -57,6 +57,7 @@ def reply(request):
     """
     logger.info('shua_bu req: {}'.format(request.body))
     reply = json.loads(request.body)
+    logger.info(reply)
     msg_type = reply['MsgType']
     if msg_type == 'text':
         to_user = reply['ToUserName']
