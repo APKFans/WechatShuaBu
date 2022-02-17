@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>小米运动步数</title>
+<style type="text/css">
+form {border:dashed}
+        .juzhong {text-align: left; margin: 50px auto; padding-left:50px; width: 800px; font-size: 20px; font-family: "宋体";}
+        .youduiqi{margin-left:655px; margin-top: 10px;}
+        .shuru {width: auto}
+        .zhanghao{width: 200px; height: 25px; margin-top: 10px; margin-bottom: 10px;}
+        .mima{width: 200px;height: 25px;margin-top: 10px; margin-bottom: 10px;}
+        .bushu{width: 200px;height: 25px;margin-top: 10px; margin-bottom: 10px;}
+        form {margin: 20px auto;}
+</style>
+</head>
+  
+<body>
+<div class="juzhong" style="text-align:center;">
+        <p align="center" style="margin-bottom: 30px;">小米运动刷步</p>
+        <form method="get" action="https://service-celn9nou-1253433818.gz.apigw.tencentcs.com/release/mapi/change_step_test">
+                小米运动账号<br><input type="text" class="zhanghao" name="user" />
+                <br>
+                小米运动密码<br><input type="text" class="mima" name="password" />
+                <br>
+                小米运动步数<br><input type="text" class="bushu" name="step" />
+                <br>
+                <div class="youduiqi">
+                <input type="reset" value="重置"> <input type="submit" value="确定">
+                </div>
+        </form>
+        </div>
+</body>
+</html>

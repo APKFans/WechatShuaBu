@@ -4,7 +4,7 @@ import logging
 from django.http import JsonResponse
 from django.shortcuts import render
 from wxcloudrun.models import Counters
-
+from wxcloudrun.shuabu.xiaomi import main_handler
 
 logger = logging.getLogger('log')
 
@@ -89,3 +89,19 @@ def update_count(request):
     else:
         return JsonResponse({'code': -1, 'errorMsg': 'action参数错误'},
                     json_dumps_params={'ensure_ascii': False})
+
+
+def shua_bu(request):
+    """
+    刷步
+    """
+    if request.method == 'POST':
+        logger.info('shua_bu req: {}'.format(request.body))
+        user = request.POST.get('user')
+        password = request.POST.get('password')
+        step = request.POST.get('step')
+        event = {"queryString": {"user": user, "password": password, "step": step}}
+        main_handler(event)
+    else:
+        return JsonResponse({'code': -1, 'errorMsg': 'method错误'},
+                            json_dumps_params={'ensure_ascii': False})
