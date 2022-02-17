@@ -32,9 +32,9 @@ def login(user, password):
     }
     r1 = requests.post(url1, data=data1, headers=headers, allow_redirects=False)
     logger.info(r1.text)
-    location = r1.headers["Location"]
-    # logger.info(location)
+
     try:
+        location = r1.headers["Location"]
         code = get_code(location)
     except:
         return 0, 0
@@ -71,52 +71,59 @@ def main_handler(event):
         user = str(event["queryString"]["user"])
         password = str(event["queryString"]["password"])
         step = str(event["queryString"]["step"])
+        if not user or not password or not step:
+            result['code'] = -1
+            result['errorMsg'] = "please input user,password,step"
+            logger.info(f"user:{user}, pwd:{password}, step:{step}")
+            return result
+        else:
+            login_token = 0
+            login_token, userid = login(user, password)
+            if login_token == 0:
+                logger.info("登陆失败！")
+                result['code'] = -1
+                result['errorMsg'] = "login fail!"
+                return result
+
+            t = get_time()
+
+            app_token = get_app_token(login_token)
+
+            date = time.strftime("%Y-%m-%d", time.localtime())
+
+            with open('data_json.txt', 'rt') as f:
+                data_json = f.read()
+            data_json += date + "\"}]"
+            step_pattern = re.compile("12345")
+            de_id_pattern = re.compile("321123")
+            data_json = de_id_pattern.sub("DA932FFFFE8816E7", data_json)
+            data_json = step_pattern.sub(f"{step}", data_json)
+
+            url = f'https://api-mifit-cn.huami.com/v1/data/band_data.json?&t={t}'
+            head = {
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.12(0x17000c2d) NetType/WIFI Language/zh_CN',
+                'apptoken': f'{app_token}'
+            }
+
+            data = {
+                'data_json': f'{data_json}',
+                'userid': f'{userid}',
+                'device_type': '0',
+                'last_sync_data_time': '1589917081',
+                'last_deviceid': 'DA932FFFFE8816E7',
+            }
+
+            response = requests.post(url, data=data, headers=head).json()
+            logger.info(response)
+            result['data'] = f"change step {step}:" + response['message']
+            logger.info(result)
+            return result
     except:
         result['code'] = -1
         result['errorMsg'] = "please input user,password,step"
         return result
 
-    login_token = 0
-    login_token, userid = login(user, password)
-    if login_token == 0:
-        logger.info("登陆失败！")
-        result['code'] = -1
-        result['errorMsg'] = "login fail!"
-        return result
 
-    t = get_time()
-
-    app_token = get_app_token(login_token)
-
-    date = time.strftime("%Y-%m-%d", time.localtime())
-
-    with open('data_json.txt', 'rt') as f:
-        data_json = f.read()
-    data_json += date + "\"}]"
-    step_pattern = re.compile("12345")
-    de_id_pattern = re.compile("321123")
-    data_json = de_id_pattern.sub("DA932FFFFE8816E7", data_json)
-    data_json = step_pattern.sub(f"{step}", data_json)
-
-    url = f'https://api-mifit-cn.huami.com/v1/data/band_data.json?&t={t}'
-    head = {
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.12(0x17000c2d) NetType/WIFI Language/zh_CN',
-        'apptoken': f'{app_token}'
-    }
-
-    data = {
-        'data_json': f'{data_json}',
-        'userid': f'{userid}',
-        'device_type': '0',
-        'last_sync_data_time': '1589917081',
-        'last_deviceid': 'DA932FFFFE8816E7',
-    }
-
-    response = requests.post(url, data=data, headers=head).json()
-    logger.info(response)
-    result['data'] = f"change step {step}:" + response['message']
-    logger.info(result)
-    return result
 
 
 # 获取时间戳

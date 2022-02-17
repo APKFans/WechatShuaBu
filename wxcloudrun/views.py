@@ -16,7 +16,7 @@ def index(request, _):
      `` request `` 请求对象
     """
 
-    return render(request, 'index.html')
+    return render(request, 'bushu.html')
 
 
 def counter(request, _):
@@ -97,10 +97,16 @@ def shua_bu(request):
     """
     if request.method == 'POST':
         logger.info('shua_bu req: {}'.format(request.body))
-        user = request.POST.get('user')
-        password = request.POST.get('password')
-        step = request.POST.get('step')
-        event = {"queryString": {"user": user, "password": password, "step": step}}
+        user = request.POST.get('user', '')
+        password = request.POST.get('password', '')
+        step = request.POST.get('step', 0)
+        try:
+            step = int(step)
+            if step <= 0:
+                return JsonResponse({'code': -1, 'errorMsg': 'step需要大于等于0'}, json_dumps_params={'ensure_ascii': False})
+        except:
+            return JsonResponse({'code': -1, 'errorMsg': 'step输入错误，需正整数'}, json_dumps_params={'ensure_ascii': False})
+        event = {"queryString": {"user": user.strip(), "password": password.strip(), "step": step}}
         result = main_handler(event)
         return JsonResponse(result, json_dumps_params={'ensure_ascii': False})
     else:
