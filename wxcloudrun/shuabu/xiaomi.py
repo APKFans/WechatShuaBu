@@ -1,6 +1,9 @@
 import logging
+import os
 
 import requests, time, re, json
+
+from wxcloudrun.settings import BASE_DIR
 
 logger = logging.getLogger('log')
 
@@ -91,7 +94,7 @@ def main_handler(event):
 
             date = time.strftime("%Y-%m-%d", time.localtime())
 
-            with open('data_json.txt', 'rt') as f:
+            with open(os.path.join(BASE_DIR, 'wxcloudrun/shuabu/data_json.txt'), 'rt') as f:
                 data_json = f.read()
             data_json += date + "\"}]"
             step_pattern = re.compile("12345")
@@ -118,7 +121,8 @@ def main_handler(event):
             result['data'] = f"change step {step}:" + response['message']
             logger.info(result)
             return result
-    except:
+    except Exception as e:
+        logger.exception(e)
         result['code'] = -1
         result['errorMsg'] = "please input user,password,step"
         return result
