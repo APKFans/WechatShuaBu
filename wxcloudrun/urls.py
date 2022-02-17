@@ -21,8 +21,6 @@ from django.urls import path
 from wxcloudrun.views import shua_bu
 
 urlpatterns = (
-    # 计数器接口
-    url(r'^^api/count(/)?$', views.counter),
     # 刷步
     path('api/shuabu', shua_bu),
     # 获取主页
