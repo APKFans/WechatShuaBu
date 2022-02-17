@@ -62,7 +62,7 @@ def reply(request):
     if msg_type == 'text':
         to_user = reply['ToUserName']
         from_user = reply['FromUserName']
-        msg = reply['content']
+        msg = reply['Content']
         m = msg.split('#')
         create_time = int(time.time())
 
