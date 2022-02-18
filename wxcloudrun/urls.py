@@ -15,10 +15,12 @@ Including another URLconf
 """
 
 from wxcloudrun import views
-from django.conf.urls import url
+from django.conf.urls import url, re_path
+from django.views.static import serve
 from django.urls import path
 
 from wxcloudrun.views import shua_bu, reply
+from wxcloudrun.settings import STATIC_ROOT
 
 urlpatterns = (
     # 刷步
@@ -27,4 +29,6 @@ urlpatterns = (
     path('api/reply', reply),
     # 获取主页
     url(r'(/)?$', views.index),
+    # 静态文件
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),  # static文件
 )

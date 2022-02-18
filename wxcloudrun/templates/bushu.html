@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html>
 <head>
@@ -65,23 +66,31 @@
 </head>
 
 <body>
-<div class="juzhong" style="text-align:center;">
+<div class="juzhong" style="text-align:center; height: 100%">
     <p align="center" style="margin-bottom: 30px;">Wechat刷步</p>
-    <div>
-        <label class="label">账号：</label><input type="text" id="username" name="username" placeholder="手机号"/>
+    <div style="">
+        <label class="label">账号：</label><input type="number" id="username" name="username" placeholder="手机号"/>
         <br>
         <label class="label">密码：</label><input type="password" id="password" name="password" placeholder="密码"/>
         <br>
-        <label class="label">步数：</label><input type="text" id="step" name="step" placeholder="目标步数"/>
+        <label class="label">步数：</label><input type="number" id="step" name="step" placeholder="目标步数"/>
         <br>
         <div id="tips"></div>
         <div class="youduiqi">
-            <button onclick="reset()">重置</button>
             <button onclick="submit()">提交</button>
+            <button onclick="reset()">重置</button>
         </div>
+    </div>
+    <div style="vertical-align: bottom; margin-top: 50px">
+        <img style="width: 100%; border-radius: 10px;" src="{% static 'image/yd.gif' %}" alt="加载失败">
     </div>
 </div>
 <script>
+    window.onload = function() {
+        document.getElementById("username").focus();
+        document.getElementById("username").style.imeMode = 'auto';
+    }
+
     var Ajax = {
         get: function (url, callback) {
             // XMLHttpRequest对象用于在后台与服务器交换数据
