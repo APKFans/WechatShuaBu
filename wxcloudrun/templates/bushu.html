@@ -66,31 +66,14 @@
             border-radius: 8px;
             background-color: #fff;
         }
-        
+
         button.submit {
             border-color: #1E9FFF;
             background-color: #1E9FFF;
             color: #fff;
         }
-        
-        button {
-	box-shadow: none;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
-	-o-box-shadow: none;
-	-ms-box-shadow: none;
-	-khtml-box-shadow: none;
-	&:focus,
-	&:active {
-		box-shadow: none;
-		-webkit-box-shadow: none;
-		-moz-box-shadow: none;
-		-o-box-shadow: none;
-		-ms-box-shadow: none;
-		-khtml-box-shadow: none;
-	}
-}
     </style>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 
 <body>
@@ -105,8 +88,8 @@
         <br>
         <div id="tips"></div>
         <div class="youduiqi">
-            <button class="submit" onclick="submit()">提交</button>
-            <button onclick="reset()">重置</button>
+            <button class="submit">提交</button>
+            <button class="reset">重置</button>
         </div>
     </div>
     <div style="margin-top: 50px">
@@ -117,75 +100,49 @@
     </div>
 </div>
 <script>
-    window.onload = function() {
-        document.getElementById("username").focus();
-        document.getElementById("username").style.imeMode = 'auto';
-    }
+    $(document).ready(function () {
+        $("#username").focus();
 
-    var Ajax = {
-        get: function (url, callback) {
-            // XMLHttpRequest对象用于在后台与服务器交换数据
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, false);
-            xhr.onreadystatechange = function () {
-                // readyState == 4说明请求已完成
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200 || xhr.status == 304) {
-                        console.log(xhr.responseText);
-                        callback(xhr.responseText);
-                    }
+        $(".reset").click(
+            function () {
+                $("#username").val("");
+                $("#password").val("");
+                $("#step").val("");
+                $("#tips").text("");
+            }
+        );
+
+        $(".submit").click(
+            function () {
+                {#alert(document.getElementById("username").value);#}
+                var username = $("#username").val().trim();
+                var password = $("#password").val().trim();
+                var step = $("#step").val().trim();
+
+                if (username === "" || password === "" || step === "") {
+                    $("#tips").text('账号、密码及步数不能为空');
+                } else {
+                    $.post("/api/shuabu",
+                        {
+                            username: username,
+                            password: password,
+                            step: step
+                        },
+                        function (data, status) {
+                            if (data.code === 0) {
+                                $("#tips").text("");
+                                alert(data.data);
+                            } else {
+                                $("#tips").text(data.errorMsg);
+                            }
+                        }
+                    );
                 }
             }
-            xhr.send();
-        },
+        );
+    });
 
-        // data应为'a=a1&b=b1'这种字符串格式，在jq里如果data为对象会自动将对象转成这种字符串格式
-        post: function (url, data, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', url, false);
-            // 添加http头，发送信息至服务器时内容编码类型
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200 || xhr.status == 304) {
-                        // console.log(xhr.responseText);
-                        callback(xhr.responseText);
-                    }
-                }
-            }
-            xhr.send(data);
-        }
-    }
 
-    function reset() {
-        document.getElementById("username").value = "";
-        document.getElementById("password").value = "";
-        document.getElementById("step").value = "";
-        document.getElementById("tips").innerText = "";
-    }
-
-    function submit() {
-        {#alert(document.getElementById("username").value);#}
-        var username = document.getElementById("username").value.trim();
-        var password = document.getElementById("password").value.trim();
-        var step = document.getElementById("step").value.trim();
-
-        if (username === "" || password === "" || step === "") {
-            document.getElementById("tips").innerText = '账号、密码及步数不能为空';
-        } else {
-            Ajax.post('/api/shuabu', "username=" + username + "&password=" + password + "&step=" + step,
-                function (res) {
-                    res = JSON.parse(res);
-                    if (res.code === 0){
-                        document.getElementById("tips").innerText = "";
-                        alert(res.data);
-                    } else{
-                        document.getElementById("tips").innerText = res.errorMsg;
-                    }
-                }
-            )
-        }
-    }
 </script>
 </body>
 </html>
