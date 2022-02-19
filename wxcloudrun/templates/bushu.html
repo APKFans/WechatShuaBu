@@ -61,7 +61,35 @@
 
         button {
             margin: 10px;
+            width: 80px;
+            height: 30px;
+            border-radius: 8px;
+            background-color: #fff;
         }
+        
+        button.submit {
+            border-color: #1E9FFF;
+            background-color: #1E9FFF;
+            color: #fff;
+        }
+        
+        button {
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-o-box-shadow: none;
+	-ms-box-shadow: none;
+	-khtml-box-shadow: none;
+	&:focus,
+	&:active {
+		box-shadow: none;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		-o-box-shadow: none;
+		-ms-box-shadow: none;
+		-khtml-box-shadow: none;
+	}
+}
     </style>
 </head>
 
@@ -77,12 +105,15 @@
         <br>
         <div id="tips"></div>
         <div class="youduiqi">
-            <button onclick="submit()">提交</button>
+            <button class="submit" onclick="submit()">提交</button>
             <button onclick="reset()">重置</button>
         </div>
     </div>
-    <div style="vertical-align: bottom; margin-top: 50px">
+    <div style="margin-top: 50px">
         <img style="width: 100%; border-radius: 10px;" src="{% static 'image/yd.gif' %}" alt="加载失败">
+    </div>
+    <div style="position: fixed; bottom: 10px; text-align:center; width: 100%;">
+        <span style="font-size: 12px; color: grey">--- By 我们仨 ---</span>
     </div>
 </div>
 <script>
