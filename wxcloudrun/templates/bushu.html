@@ -93,15 +93,16 @@
         </div>
     </div>
     <div style="margin-top: 50px">
-        <img style="width: 100%; border-radius: 10px;" src="{% static 'image/yd.gif' %}" alt="加载失败">
+        <img style="width: 100%; border-radius: 10px;" src="{{ url }}" alt="加载失败">
     </div>
     <div style="position: fixed; bottom: 10px; text-align:center; width: 100%;">
-        <span style="font-size: 12px; color: grey">--- By 我们仨 ---</span>
+        <span style="font-size: 12px; color: grey">--- By 我们仨 ©2022 ---</span>
     </div>
 </div>
 <script>
     $(document).ready(function () {
         $("#username").focus();
+        $("#username").click();
 
         $(".reset").click(
             function () {

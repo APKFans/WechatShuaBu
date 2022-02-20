@@ -1,5 +1,6 @@
 import json
 import logging
+import random
 import time
 
 from django.http import JsonResponse, HttpResponse
@@ -16,8 +17,8 @@ def index(request, _):
 
      `` request `` 请求对象
     """
-
-    return render(request, 'bushu.html', {"error": ""})
+    r = random.randint(1, 3)
+    return render(request, 'bushu.html', {"url": f"/wxcloudrun/static/image/{r}.gif"})
 
 
 def shua_bu(request):
